@@ -1,6 +1,11 @@
+Build.PL
 Changes
-DispatchToAll.pm
+lib/Class/DispatchToAll.pm
 Makefile.PL
 MANIFEST
 README
-test.pl
+t/00_load.t
+t/99_pod.t
+t/99_pod_coverage.t
+t/test.t
+META.yml

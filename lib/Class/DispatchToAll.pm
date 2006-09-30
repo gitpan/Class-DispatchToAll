@@ -1,15 +1,12 @@
 #-----------------------------------------------------------------
 # Class::DispatchToAll
 #-----------------------------------------------------------------
-# Copyright Thomas Klausner / ZSI 2001, 2002
+# Copyright Thomas Klausner 2001, 2002, 2006
 # You may use and distribute this module according to the same terms
 # that Perl is distributed under.
 #
-# Thomas Klausner domm@zsi.at http://domm.zsi.at
+# Thomas Klausner domm@cpan.org http://domm.plix.at
 #
-# $Author: domm $
-# $Date: 2002/07/15 21:32:23 $
-# $Revision: 1.2 $
 #-----------------------------------------------------------------
 # Class::Data::DispatchToAll - dispatch a method call to all inherited methods
 #-----------------------------------------------------------------
@@ -25,8 +22,7 @@ our @ISA = qw(Exporter);
 
 our @EXPORT_OK = (qw(dispatch_to_all));
 
-our $VERSION = '0.10';
-
+our $VERSION = '0.11';
 
 
 #-----------------------------------------------------------------
@@ -39,17 +35,15 @@ sub dispatch_to_all {
     my @result_set;
 
     my $data={
-	      self=>$self,
-	      class=>ref($self)||$self,
-	      method=>$method,
-	      attribs=>$attributes,
-	      result_set=>\@result_set,
-	     };
-
+        self=>$self,
+        class=>ref($self)||$self,
+        method=>$method,
+        attribs=>$attributes,
+        result_set=>\@result_set,
+    };
 
     _dispatcher($data,@_);
     return wantarray?@result_set:\@result_set;
-
 }
 
 
@@ -64,25 +58,25 @@ sub _dispatcher {
     my $call=$data->{'class'}."::".$data->{'method'};
 
     if ($data->{'attrib'}{'no_collect'}) {
-	$call->($data->{'self'},@_) if *$call{CODE};
+        $call->($data->{'self'},@_) if *$call{CODE};
     } else {
-	push(@{$data->{'result_set'}},$call->($data->{'self'},@_)) if *$call{CODE};
+        push(@{$data->{'result_set'}},$call->($data->{'self'},@_)) if *$call{CODE};
     }
 
     my @isa=eval "@".$data->{'class'}."::ISA";
     foreach my $parent (@isa) {
-	$data->{'class'}=$parent;
-	_dispatcher($data,@_);
+        $data->{'class'}=$parent;
+        _dispatcher($data,@_);
     }
 }
 
-
 1;
+
 __END__
 
 =head1 NAME
 
-Class::DispatchToAll - dispatch a method call to all inherited methods
+Class::DispatchToAll - Dispatch a method call to all inherited methods
 
 =head1 SYNOPSIS
 
@@ -104,7 +98,7 @@ Class::DispatchToAll - dispatch a method call to all inherited methods
 =head1 DESCRIPTION
 
 See the Docs of Damian Conways Module Class::Delegation for a good
-introduction about Dispatching vs. Inheritance
+introduction about Dispatching vs. Inheritance.
 
 Class::DispatchToAll enables you to call B<all> instantances of a
 method in your inheritance tree (or labyrinth..).
@@ -201,14 +195,14 @@ might lead to some confusion.. See L<TODO>).
 
 Currently, the first called method (i.e. the one Perl would originally
 call) will be the first value of this array, followed by all other
-values. If a method doesn't exist in one class, B<no> value will be
+values. If a method doesn't exist in any class, B<no> value will be
 returned (maybe C<undef> would be better, don't know now..).
 
 What you do with this values and how to decide which one to use (if
 you only need one) is up to you.
 
 One thing I do (and the reason for writing this module) is to
-condensate differnet config values to one, e.g.:
+condensate different config values to one, e.g.:
 
   A::config="test";
   A::A::config="test2";
@@ -258,14 +252,17 @@ depth)
 
 To install this module type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    perl Build.PL
+    ./Build
+    ./Build test
+    sudo ./Build install
 
 =head1 BUGS
 
-hmm?
+Please report any bugs or feature requests to
+C<bug-class-dispatchtoall@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org>.  I will be notified, and then you'll automatically
+be notified of progress on your bug as I make changes.
 
 =head1 SEE ALSO
 
@@ -276,11 +273,11 @@ http://www.perlmonks.org/index.pl?node_id=180852
 
 =head1 AUTHOR
 
-Thomas Klausner, domm@zsi.at, http://domm.zsi.at
+Thomas Klausner, domm@cpan.org, http://domm.plix.at
 
 =head1 COPYRIGHT
 
-Class::DispatchToAll is Copyright (c) 2002 Thomas Klausner, ZSI.
+Class::DispatchToAll is Copyright (c) 2002,2006 Thomas Klausner.
 All rights reserved.
 
 You may use and distribute this module according to the same terms
